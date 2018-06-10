@@ -1,7 +1,7 @@
+require("dotenv").config();
 var mysql = require("mysql");
 var inquirer = require("inquirer");
-var columnify = require('columnify');
-require("dotenv").config();
+
 let choiceArray = [];
 var arrayFilled = false;
 
@@ -40,22 +40,30 @@ connection.connect(function(err) {
   }
 
   function start() {
-    inquirer.prompt([
+    inquirer.prompt([      
         {
-          name: "item",
+          name: "product",
           type: "list",
           message: "Which item would you like to purchase?",
-          choices: ['a', 'b']
+          choices: function() {
+            var choiceArray = [];
+            for (var i = 0; i < results.length; i++) {
+                choiceArray.push(results[i].product_name);
+            }
+            return choiceArray;
         },
+        message: "What product would you like to purchase?"
+    }
         {
-          name: "item",
+          name: "amount",
           type: "input",
           message: "How many would you like to purchase?"
         }
-      ]).then(function(){
-        console.log('2')
-      })
-    }
-  
-
-    
+      ]).then(function(answer) {
+        var chosenProduct;
+        for (var i = 0; i < results.length; i++) {
+            if (results[i].product_name === answer.product) {
+                chosenProduct = results[i];
+            }
+          }
+        }
